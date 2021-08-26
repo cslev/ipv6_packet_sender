@@ -4,7 +4,7 @@ import argparse
 from datetime import datetime
 from time import sleep
 from random import randint
-from scapy.all import IPv6,TCP,Raw,sendp
+from scapy.all import IPv6,TCP,Raw,sendp,send
 
 import sys #for OS errors
 
@@ -77,6 +77,7 @@ def assemble_ipv6_packet(src_ip,dst_ip,src_port,dst_port,payload):
     TCP_HEADER=TCP(sport=src_port,dport=dst_port,flags="S")
     PAYLOAD=Raw(payload)
     PACKET=IP_HEADER/TCP_HEADER/PAYLOAD
+    PACKET.show()
 
     return PACKET
 
