@@ -76,10 +76,10 @@ def assemble_ipv6_packet(src_ip,dst_ip,src_port,dst_port,payload):
     IP_HEADER=IPv6(src=src_ip,dst=dst_ip)
     TCP_HEADER=TCP(sport=src_port,dport=dst_port,flags="S")
     PAYLOAD=Raw(payload)
-    PACKET=IP_HEADER/TCP_HEADER/PAYLOAD
-    PACKET.show()
+    p=IP_HEADER/TCP_HEADER/PAYLOAD
+    p.show()
 
-    return PACKET
+    return p
 
 
 def send_packet(packet, iface=INTF):
