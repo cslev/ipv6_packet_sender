@@ -86,7 +86,7 @@ def send_packet(packet, iface=INTF):
     This function sends a crafted ipv6 packet on an IPv6 enabled interface 
     '''
     try:
-        sendp(PACKET,iface=iface)
+        sendp(packet,iface=iface)
     except OSError as e:
         print("Could not sent packet...maybe your interface is not IPv6-enabled?")
         print("Error message below")
