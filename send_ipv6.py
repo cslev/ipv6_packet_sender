@@ -4,7 +4,7 @@ import argparse
 from datetime import datetime
 from time import sleep
 from random import randint
-from scapy.all import IPv6,TCP,Raw,sendp,send
+from scapy.all import Ether,IPv6,TCP,Raw,sendp,send
 
 import sys #for OS errors
 
@@ -78,8 +78,8 @@ def assemble_ipv6_packet(src_ip,dst_ip,src_port,dst_port,payload):
     IP_HEADER=IPv6(src=src_ip,dst=dst_ip)
     TCP_HEADER=TCP(sport=src_port,dport=dst_port,flags="S")
     PAYLOAD=Raw(payload)
-    p=IP_HEADER/TCP_HEADER/PAYLOAD
-    p.show()
+    p=Ether()/IP_HEADER/TCP_HEADER/PAYLOAD
+#    p.show()
 
     return p
 
@@ -91,8 +91,8 @@ def send_packet(packet, iface=INTF):
     try:
         print("sendp packet on iface {}".format(iface))
         sendp(packet,iface=iface)
-        print("send packet")
-        send(packet)
+#        print("send packet")
+#        send(packet)
     except OSError as e:
         print("Could not sent packet...maybe your interface is not IPv6-enabled?")
         print("Error message below")
