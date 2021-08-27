@@ -26,7 +26,6 @@ PAYLOAD_DEFAULT="asdasdasdasdadasdasdasdasdasdasdasdasdasdasdasssssssssssssasddd
 "3905a4erutgjsd;oizlnvijgraogjfdgdjspogjfidsdssdsdsdssdsdddddd12345678901234567891222222223" \
 "23"
 
-PAYLOAD_DEFAULT_2="payload"
 
 # parser for the command line args
 parser = argparse.ArgumentParser(description="Craft IPv6 packet and send", formatter_class=argparse.RawTextHelpFormatter)
@@ -71,14 +70,30 @@ RANDOMIZE_SRC_PORT=results.randomize_srcport
 # print("#### ------- ####\n")
 
 
-def assemble_ipv6_packet(src_ip,dst_ip,src_port,dst_port,payload):
+def assemble_ipv6_packet(   src_ip,
+                            dst_ip,
+                            src_port=randint(1024,65535),
+                            dst_port=179,
+                            payload=PAYLOAD_DEFAULT, 
+                            tcp_flag="S"
+                        ):
     '''
-    This function assembles an IPv6 packet
+    This function assembles an IPv6 packet by the header and payload data supplied
     '''
+    #play around with MAC addresses here - we just use defaults without setting specific SRC or DST
+    ETHER=Ether() 
+
+    #creating the IPv6 header from the addresses supported
     IP_HEADER=IPv6(src=src_ip,dst=dst_ip)
-    TCP_HEADER=TCP(sport=src_port,dport=dst_port,flags="S")
+
+    #TCP header - create using the ports supplied and set syn flag
+    TCP_HEADER=TCP(sport=src_port,dport=dst_port,flags=tcp_flag)
+
+    #create RAW payload from the payload string
     PAYLOAD=Raw(payload)
-    p=Ether()/IP_HEADER/TCP_HEADER/PAYLOAD
+
+    #assemble the packet
+    p=ETHER/IP_HEADER/TCP_HEADER/PAYLOAD
 #    p.show()
 
     return p
@@ -91,15 +106,13 @@ def send_packet(packet, iface=INTF):
     try:
         print("sendp packet on iface {}".format(iface))
         sendp(packet,iface=iface)
-#        print("send packet")
-#        send(packet)
+
     except OSError as e:
         print("Could not sent packet...maybe your interface is not IPv6-enabled?")
         print("Error message below")
         print("-----------------------------------")
         print(e)
 
-# IP_HEADER.show()
 
 
 if(not TCP_SYN):
@@ -128,9 +141,15 @@ start_time_date = datetime.now()
 if RANDOMIZE_SRC_PORT:
     for n in range(0,NUM_PACKETS):
         #generate a packet with a random source port 
-        PACKET=assemble_ipv6_packet(SRC_IP,DST_IP,randint(1,65535),DST_PORT,PAYLOAD)
-        send_packet(PACKET,INTF)
-        
+        for FLAG in ["S","A","RA","F"]:
+            PACKET=assemble_ipv6_packet(src_ip=SRC_IP,
+                                        dst_ip=DST_IP,
+                                        src_port=randint(1,65535),
+                                        dst_port=DST_PORT,
+                                        payload=PAYLOAD,
+                                        tcp_flag=FLAG)
+            send_packet(PACKET,INTF)
+            
 else:
     #create one packet and send as many times needed
     PACKET=assemble_ipv6_packet(SRC_IP,DST_IP,SRC_PORT,DST_PORT,PAYLOAD)
