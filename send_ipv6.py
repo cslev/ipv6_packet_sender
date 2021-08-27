@@ -137,11 +137,12 @@ start_time_date = datetime.now()
 # print(end_time_date-start_time_date)
 
 
+TCP_FLAGS=["F","S","R","P","A","U","E","C"]
 
 if RANDOMIZE_SRC_PORT:
     for n in range(0,NUM_PACKETS):
-        #generate a packet with a random source port 
-        for FLAG in ["S","A","RA","F"]:
+        #generate a packet with a random source port
+        for FLAG in ["S"]: # we only use syn  for now
             PACKET=assemble_ipv6_packet(src_ip=SRC_IP,
                                         dst_ip=DST_IP,
                                         src_port=randint(1,65535),
