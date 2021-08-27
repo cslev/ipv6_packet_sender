@@ -26,6 +26,8 @@ PAYLOAD_DEFAULT="asdasdasdasdadasdasdasdasdasdasdasdasdasdasdasssssssssssssasddd
 "3905a4erutgjsd;oizlnvijgraogjfdgdjspogjfidsdssdsdsdssdsdddddd12345678901234567891222222223" \
 "23"
 
+PAYLOAD_DEFAULT_2="payload"
+
 # parser for the command line args
 parser = argparse.ArgumentParser(description="Craft IPv6 packet and send", formatter_class=argparse.RawTextHelpFormatter)
 
@@ -87,8 +89,10 @@ def send_packet(packet, iface=INTF):
     This function sends a crafted ipv6 packet on an IPv6 enabled interface 
     '''
     try:
-        print("send packet on iface {}".format(iface))
+        print("sendp packet on iface {}".format(iface))
         sendp(packet,iface=iface)
+        print("send packet")
+        send(packet)
     except OSError as e:
         print("Could not sent packet...maybe your interface is not IPv6-enabled?")
         print("Error message below")
